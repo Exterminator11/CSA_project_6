@@ -38,7 +38,7 @@ static __inline__ unsigned long long rdtsc(void)
  * Please fill in the following team struct 
  */
 team_t team = {
-    "Rachit",              /* Team name */
+    "5697",              /* Team name */
 
     "Rachit R. Das",     /* First member full name */
     "rachit.das@gwu.edu",  /* First member email address */
