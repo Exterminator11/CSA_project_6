@@ -414,16 +414,29 @@ void my_smooth(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 	// 		dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
 
 	//loop interchange + loop unrolling
+	// for (i = 0; i < dim; i++)
+	// 	for (j = 0; j < dim; j+=8){
+	// 		dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
+	// 		if(j+1<dim) dst[RIDX(i, j+1, dim)] = avg(dim, i, j+1, src);
+	// 		if(j+2<dim) dst[RIDX(i, j+2, dim)] = avg(dim, i, j+2, src);
+	// 		if(j+3<dim) dst[RIDX(i, j+3, dim)] = avg(dim, i, j+3, src);
+	// 		if(j+4<dim) dst[RIDX(i, j+4, dim)] = avg(dim, i, j+4, src);
+	// 		if(j+5<dim) dst[RIDX(i, j+5, dim)] = avg(dim, i, j+5, src);
+	// 		if(j+6<dim) dst[RIDX(i, j+6, dim)] = avg(dim, i, j+6, src);
+	// 		if(j+7<dim) dst[RIDX(i, j+7, dim)] = avg(dim, i, j+7, src);
+	// 	}
+
+	//loop interchange + loop unrolling + remove RIDX
 	for (i = 0; i < dim; i++)
 		for (j = 0; j < dim; j+=8){
-			dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
-			if(j+1<dim) dst[RIDX(i, j+1, dim)] = avg(dim, i, j+1, src);
-			if(j+2<dim) dst[RIDX(i, j+2, dim)] = avg(dim, i, j+2, src);
-			if(j+3<dim) dst[RIDX(i, j+3, dim)] = avg(dim, i, j+3, src);
-			if(j+4<dim) dst[RIDX(i, j+4, dim)] = avg(dim, i, j+4, src);
-			if(j+5<dim) dst[RIDX(i, j+5, dim)] = avg(dim, i, j+5, src);
-			if(j+6<dim) dst[RIDX(i, j+6, dim)] = avg(dim, i, j+6, src);
-			if(j+7<dim) dst[RIDX(i, j+7, dim)] = avg(dim, i, j+7, src);
+			dst[(i)*(dim)+(j)] = avg(dim, i, j, src);
+			if(j+1<dim) dst[(i)*(dim)+(j+1)] = avg(dim, i, j+1, src);
+			if(j+2<dim) dst[(i)*(dim)+(j+2)] = avg(dim, i, j+2, src);
+			if(j+3<dim) dst[(i)*(dim)+(j+3)] = avg(dim, i, j+3, src);
+			if(j+4<dim) dst[(i)*(dim)+(j+4)] = avg(dim, i, j+4, src);
+			if(j+5<dim) dst[(i)*(dim)+(j+5)] = avg(dim, i, j+5, src);
+			if(j+6<dim) dst[(i)*(dim)+(j+6)] = avg(dim, i, j+6, src);
+			if(j+7<dim) dst[(i)*(dim)+(j+7)] = avg(dim, i, j+7, src);
 		}
 
 
