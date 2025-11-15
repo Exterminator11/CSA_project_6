@@ -123,13 +123,8 @@ void my_rotate(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 
 /* ANY CHANGES ARE MADE HERE */
 /* below are the main computations for your implementation of the rotate. Any changes in implementation will go here or the other functions it may call */
-	// for (j = 0; j < dim; j++)
-	// 	for (i = 0; i < dim; i++)
-	// 		dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
-
-	//loop interchange
-	for (i = 0; i < dim; i++)
-		for (j = 0; j < dim; j++)
+	for (j = 0; j < dim; j++)
+		for (i = 0; i < dim; i++)
 			dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
 
 
