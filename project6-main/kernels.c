@@ -8,7 +8,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
-#define BLOCK 32
+#define BLOCK 16
 
 /* Below are statements to set up the performance measurement utilities */
 /* we use rdtsc, clock, and getusage utilities to measure performance */
