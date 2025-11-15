@@ -8,7 +8,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
-#define BLOCK 16
+#define BLOCK 32
 
 /* Below are statements to set up the performance measurement utilities */
 /* we use rdtsc, clock, and getusage utilities to measure performance */
@@ -142,11 +142,22 @@ void my_rotate(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 	// 				dst[RIDX(dim-1-jj, ii, dim)] = src[RIDX(ii, jj, dim)];
 
 	//Blocking + Loop interchange
-	for (i = 0; i < dim; i+=BLOCK)
-		for (j = 0; j < dim; j+=BLOCK)
-			for(int ii=i;ii<i+BLOCK && ii<dim;ii++)
-				for(int jj=j;jj<j+BLOCK && jj<dim;jj++)
+	// for (i = 0; i < dim; i+=BLOCK)
+	// 	for (j = 0; j < dim; j+=BLOCK)
+	// 		for(int ii=i;ii<i+BLOCK && ii<dim;ii++)
+	// 			for(int jj=j;jj<j+BLOCK && jj<dim;jj++)
+	// 				dst[RIDX(dim-1-jj, ii, dim)] = src[RIDX(ii, jj, dim)];
+
+	//Blocking + unrolling
+	for (j = 0; j < dim; j+=BLOCK)
+		for (i = 0; i < dim; i+=BLOCK)
+			for(int jj=j;jj<j+BLOCK && jj<dim;jj++)
+				for(int ii=i;ii<i+BLOCK && ii<dim;ii+=4){
 					dst[RIDX(dim-1-jj, ii, dim)] = src[RIDX(ii, jj, dim)];
+					if(ii+1<dim) dst[RIDX(dim-1-jj, ii+1, dim)] = src[RIDX(ii+1, jj, dim)];
+					if(ii+2<dim) dst[RIDX(dim-1-jj, ii+2, dim)] = src[RIDX(ii+2, jj, dim)];
+					if(ii+3<dim) dst[RIDX(dim-1-jj, ii+3, dim)] = src[RIDX(ii+3, jj, dim)];
+				}
 
 
 /* end of computation for rotate function. any changes you make should be made above this line. */
