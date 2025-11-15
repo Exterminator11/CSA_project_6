@@ -135,10 +135,17 @@ void my_rotate(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 	// 		dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
 
 	//Blocking
-	for (j = 0; j < dim; j+=BLOCK)
-		for (i = 0; i < dim; i+=BLOCK)
-			for(int jj=j;jj<j+BLOCK && jj<dim;jj++)
-				for(int ii=i;ii<i+BLOCK && ii<dim;ii++)
+	// for (j = 0; j < dim; j+=BLOCK)
+	// 	for (i = 0; i < dim; i+=BLOCK)
+	// 		for(int jj=j;jj<j+BLOCK && jj<dim;jj++)
+	// 			for(int ii=i;ii<i+BLOCK && ii<dim;ii++)
+	// 				dst[RIDX(dim-1-jj, ii, dim)] = src[RIDX(ii, jj, dim)];
+
+	//Blocking + Loop interchange
+	for (i = 0; i < dim; i+=BLOCK)
+		for (j = 0; j < dim; j+=BLOCK)
+			for(int ii=i;ii<i+BLOCK && ii<dim;ii++)
+				for(int jj=j;jj<j+BLOCK && jj<dim;jj++)
 					dst[RIDX(dim-1-jj, ii, dim)] = src[RIDX(ii, jj, dim)];
 
 
