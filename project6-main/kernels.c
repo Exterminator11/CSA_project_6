@@ -343,11 +343,46 @@ static pixel avg(int dim, int i, int j, pixel *src)
 	pixel current_pixel;
 
 	initialize_pixel_sum(&sum);
+
 	for(ii = maximum(i-1, 0); ii <= minimum(i+1, dim-1); ii++) 
-		for(jj = maximum(j-1, 0); jj <= minimum(j+1, dim-1); jj++) 
+		for(jj = maximum(j-1, 0); jj <= minimum(j+1, dim-1); jj++)
 			accumulate_sum(&sum, src[RIDX(ii, jj, dim)]);
 
 	assign_sum_to_pixel(&current_pixel, sum);
+	return current_pixel;
+}
+
+static pixel my_avg(int dim, int i, int j, pixel *src) 
+{
+	int ii, jj;
+	pixel_sum sum;
+	pixel current_pixel;
+
+	// initialize_pixel_sum(&sum);
+
+	//function inlining
+	sum.red = sum.green = sum.blue = 0;
+	sum.num = 0;
+
+	for(ii = maximum(i-1, 0); ii <= minimum(i+1, dim-1); ii++) 
+		for(jj = maximum(j-1, 0); jj <= minimum(j+1, dim-1); jj++) {
+			// accumulate_sum(&sum, src[RIDX(ii, jj, dim)]);
+			
+			//function inlining
+			pixel p=src[RIDX(ii, jj, dim)];
+			sum.red += (int) p.red;
+			sum.green += (int) p.green;
+			sum.blue += (int) p.blue;
+			sum.num++;
+		}
+
+	// assign_sum_to_pixel(&current_pixel, sum);
+
+	//function inlining
+	current_pixel.red = (unsigned short) (sum.red/sum.num);
+	current_pixel.green = (unsigned short) (sum.green/sum.num);
+	current_pixel.blue = (unsigned short) (sum.blue/sum.num);
+
 	return current_pixel;
 }
 
@@ -410,9 +445,9 @@ void my_smooth(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 	// 		dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
 
 	//loop interchange
-	// for (i = 0; i < dim; i++)
-	// 	for (j = 0; j < dim; j++)
-	// 		dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
+	for (i = 0; i < dim; i++)
+		for (j = 0; j < dim; j++)
+			dst[RIDX(i, j, dim)] = my_avg(dim, i, j, src);
 
 	//loop interchange + loop unrolling
 	// for (i = 0; i < dim; i++)
@@ -441,19 +476,19 @@ void my_smooth(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 	// 	}
 
 	//loop interchange + loop unrolling + blocking(small block size)
-	for (i = 0; i < dim; i+=BLOCK_SMOOTH)
-		for (j = 0; j < dim; j+=BLOCK_SMOOTH)
-			for(int ii=i; ii<i+BLOCK_SMOOTH && ii<dim;ii++)
-				for(int jj=j;jj<j+BLOCK_SMOOTH && jj<dim;jj+=8){
-					dst[RIDX(ii, jj, dim)] = avg(dim, ii, jj, src);
-					if(jj+1<dim) dst[RIDX(ii, jj+1, dim)] = avg(dim, ii, jj+1, src);
-					if(jj+2<dim) dst[RIDX(ii, jj+2, dim)] = avg(dim, ii, jj+2, src);
-					if(jj+3<dim) dst[RIDX(ii, jj+3, dim)] = avg(dim, ii, jj+3, src);
-					if(jj+4<dim) dst[RIDX(ii, jj+4, dim)] = avg(dim, ii, jj+4, src);
-					if(jj+5<dim) dst[RIDX(ii, jj+5, dim)] = avg(dim, ii, jj+5, src);
-					if(jj+6<dim) dst[RIDX(ii, jj+6, dim)] = avg(dim, ii, jj+6, src);
-					if(jj+7<dim) dst[RIDX(ii, jj+7, dim)] = avg(dim, ii, jj+7, src);
-				}
+	// for (i = 0; i < dim; i+=BLOCK_SMOOTH)
+	// 	for (j = 0; j < dim; j+=BLOCK_SMOOTH)
+	// 		for(int ii=i; ii<i+BLOCK_SMOOTH && ii<dim;ii++)
+	// 			for(int jj=j;jj<j+BLOCK_SMOOTH && jj<dim;jj+=8){
+	// 				dst[RIDX(ii, jj, dim)] = avg(dim, ii, jj, src);
+	// 				if(jj+1<dim) dst[RIDX(ii, jj+1, dim)] = avg(dim, ii, jj+1, src);
+	// 				if(jj+2<dim) dst[RIDX(ii, jj+2, dim)] = avg(dim, ii, jj+2, src);
+	// 				if(jj+3<dim) dst[RIDX(ii, jj+3, dim)] = avg(dim, ii, jj+3, src);
+	// 				if(jj+4<dim) dst[RIDX(ii, jj+4, dim)] = avg(dim, ii, jj+4, src);
+	// 				if(jj+5<dim) dst[RIDX(ii, jj+5, dim)] = avg(dim, ii, jj+5, src);
+	// 				if(jj+6<dim) dst[RIDX(ii, jj+6, dim)] = avg(dim, ii, jj+6, src);
+	// 				if(jj+7<dim) dst[RIDX(ii, jj+7, dim)] = avg(dim, ii, jj+7, src);
+	// 			}
 		
 
 
