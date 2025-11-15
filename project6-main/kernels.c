@@ -8,6 +8,8 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
+#define BLOCK 16
+
 /* Below are statements to set up the performance measurement utilities */
 /* we use rdtsc, clock, and getusage utilities to measure performance */
 
@@ -127,9 +129,17 @@ void my_rotate(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 	// 	for (i = 0; i < dim; i++)
 	// 		dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
 
-	for (i = 0; i < dim; i++)
-		for (j = 0; j < dim; j++)
-			dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
+	// loop interchange does not work
+	// for (i = 0; i < dim; i++)
+	// 	for (j = 0; j < dim; j++)
+	// 		dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
+
+	//Blocking
+	for (j = 0; j < dim; j+=BLOCK)
+		for (i = 0; i < dim; i+=BLOCK)
+			for(int jj=j;jj<j+BLOCK && jj<dim;jj++)
+				for(int ii=i;ii<i+BLOCK && ii<dim;ii++)
+					dst[RIDX(dim-1-jj, ii, dim)] = src[RIDX(ii, jj, dim)];
 
 
 /* end of computation for rotate function. any changes you make should be made above this line. */
