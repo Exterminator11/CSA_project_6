@@ -193,46 +193,46 @@ void my_rotate(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 	// 		}
 
 	// Blocking + unrolling(8 times) + common subexpression elimination + eliminating branches using a singular limit instead if
-	// for (j = 0; j < dim; j+=BLOCK)
-	// 	for (i = 0; i < dim; i+=BLOCK)
-	// 		for(int jj=j;jj<j+BLOCK && jj<dim;jj++){
-	// 			int dIdx=dim-1-jj;
-	// 			int max_i = (i + BLOCK < dim) ? (i + BLOCK) : dim;
-	// 			/* round max_i down to multiple of 8 relative to i */
-	// 			int limit = max_i - ((max_i - i) % 8);
-
-	// 			int ii;
-	// 			for(ii=i;ii<limit;ii+=8){
-	// 				dst[RIDX(dIdx, ii, dim)] = src[RIDX(ii, jj, dim)];
-	// 				if(ii+1<dim) dst[RIDX(dIdx, ii+1, dim)] = src[RIDX(ii+1, jj, dim)];
-	// 				if(ii+2<dim) dst[RIDX(dIdx, ii+2, dim)] = src[RIDX(ii+2, jj, dim)];
-	// 				if(ii+3<dim) dst[RIDX(dIdx, ii+3, dim)] = src[RIDX(ii+3, jj, dim)];
-	// 				if(ii+4<dim) dst[RIDX(dIdx, ii+4, dim)] = src[RIDX(ii+4, jj, dim)];
-	// 				if(ii+5<dim) dst[RIDX(dIdx, ii+5, dim)] = src[RIDX(ii+5, jj, dim)];
-	// 				if(ii+6<dim) dst[RIDX(dIdx, ii+6, dim)] = src[RIDX(ii+6, jj, dim)];
-	// 				if(ii+7<dim) dst[RIDX(dIdx, ii+7, dim)] = src[RIDX(ii+7, jj, dim)];
-	// 			}
-	// 			for (; ii < max_i; ii++)
-    //             	dst[RIDX(dIdx, ii, dim)] = src[RIDX(ii, jj, dim)];
-	// 		}
-
-	//Blocking + unrolling(8 times) + common subexpression elimination + eliminating RIDX to reduce multiplications
 	for (j = 0; j < dim; j+=BLOCK)
 		for (i = 0; i < dim; i+=BLOCK)
 			for(int jj=j;jj<j+BLOCK && jj<dim;jj++){
 				int dIdx=dim-1-jj;
-				int dstBase = dIdx * dim;
-				for(int ii=i;ii<i+BLOCK && ii<dim;ii+=8){
-					dst[dstBase+ii] = src[(ii)*(dim)+jj];
-					if(ii+1<dim) dst[dstBase+ii+1] = src[(ii+1)*(dim)+jj];
-					if(ii+2<dim) dst[dstBase+ii+2] = src[(ii+2)*(dim)+jj];
-					if(ii+3<dim) dst[dstBase+ii+3] = src[(ii+3)*(dim)+jj];
-					if(ii+4<dim) dst[dstBase+ii+4] = src[(ii+4)*(dim)+jj];
-					if(ii+5<dim) dst[dstBase+ii+5] = src[(ii+5)*(dim)+jj];
-					if(ii+6<dim) dst[dstBase+ii+6] = src[(ii+6)*(dim)+jj];
-					if(ii+7<dim) dst[dstBase+ii+7] = src[(ii+7)*(dim)+jj];
+				int max_i = (i + BLOCK < dim) ? (i + BLOCK) : dim;
+				/* round max_i down to multiple of 8 relative to i */
+				int limit = max_i - ((max_i - i) % 8);
+
+				int ii;
+				for(ii=i;ii<limit;ii+=8){
+					dst[RIDX(dIdx, ii, dim)] = src[RIDX(ii, jj, dim)];
+					dst[RIDX(dIdx, ii+1, dim)] = src[RIDX(ii+1, jj, dim)];
+					dst[RIDX(dIdx, ii+2, dim)] = src[RIDX(ii+2, jj, dim)];
+					dst[RIDX(dIdx, ii+3, dim)] = src[RIDX(ii+3, jj, dim)];
+					dst[RIDX(dIdx, ii+4, dim)] = src[RIDX(ii+4, jj, dim)];
+					dst[RIDX(dIdx, ii+5, dim)] = src[RIDX(ii+5, jj, dim)];
+					dst[RIDX(dIdx, ii+6, dim)] = src[RIDX(ii+6, jj, dim)];
+					dst[RIDX(dIdx, ii+7, dim)] = src[RIDX(ii+7, jj, dim)];
 				}
+				for (; ii < max_i; ii++)
+                	dst[RIDX(dIdx, ii, dim)] = src[RIDX(ii, jj, dim)];
 			}
+
+	//Blocking + unrolling(8 times) + common subexpression elimination + eliminating RIDX to reduce multiplications
+	// for (j = 0; j < dim; j+=BLOCK)
+	// 	for (i = 0; i < dim; i+=BLOCK)
+	// 		for(int jj=j;jj<j+BLOCK && jj<dim;jj++){
+	// 			int dIdx=dim-1-jj;
+	// 			int dstBase = dIdx * dim;
+	// 			for(int ii=i;ii<i+BLOCK && ii<dim;ii+=8){
+	// 				dst[dstBase+ii] = src[(ii)*(dim)+jj];
+	// 				if(ii+1<dim) dst[dstBase+ii+1] = src[(ii+1)*(dim)+jj];
+	// 				if(ii+2<dim) dst[dstBase+ii+2] = src[(ii+2)*(dim)+jj];
+	// 				if(ii+3<dim) dst[dstBase+ii+3] = src[(ii+3)*(dim)+jj];
+	// 				if(ii+4<dim) dst[dstBase+ii+4] = src[(ii+4)*(dim)+jj];
+	// 				if(ii+5<dim) dst[dstBase+ii+5] = src[(ii+5)*(dim)+jj];
+	// 				if(ii+6<dim) dst[dstBase+ii+6] = src[(ii+6)*(dim)+jj];
+	// 				if(ii+7<dim) dst[dstBase+ii+7] = src[(ii+7)*(dim)+jj];
+	// 			}
+	// 		}
 
 
 
