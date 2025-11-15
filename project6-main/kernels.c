@@ -404,8 +404,13 @@ void my_smooth(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 /* ANY CHANGES TO BE MADE SHOULD BE BELOW HERE */
 /* below are the main computations for your implementation of the smooth function. Any changes in implementation will go here or the other functiosn it calls */
 
-	for (j = 0; j < dim; j++)
-		for (i = 0; i < dim; i++)
+	// for (j = 0; j < dim; j++)
+	// 	for (i = 0; i < dim; i++)
+	// 		dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
+
+	//loop interchange
+	for (i = 0; i < dim; i++)
+		for (j = 0; j < dim; j++)
 			dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
 
 /* end of computation for smooth function. so don't change anything after this in this function. */
