@@ -9,6 +9,7 @@
 #include <sys/resource.h>
 
 #define BLOCK 32
+#define BLOCK_SMOOTH 8
 
 /* Below are statements to set up the performance measurement utilities */
 /* we use rdtsc, clock, and getusage utilities to measure performance */
@@ -427,17 +428,35 @@ void my_smooth(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 	// 	}
 
 	//loop interchange + loop unrolling + remove RIDX
-	for (i = 0; i < dim; i++)
-		for (j = 0; j < dim; j+=8){
-			dst[(i)*(dim)+(j)] = avg(dim, i, j, src);
-			if(j+1<dim) dst[(i)*(dim)+(j+1)] = avg(dim, i, j+1, src);
-			if(j+2<dim) dst[(i)*(dim)+(j+2)] = avg(dim, i, j+2, src);
-			if(j+3<dim) dst[(i)*(dim)+(j+3)] = avg(dim, i, j+3, src);
-			if(j+4<dim) dst[(i)*(dim)+(j+4)] = avg(dim, i, j+4, src);
-			if(j+5<dim) dst[(i)*(dim)+(j+5)] = avg(dim, i, j+5, src);
-			if(j+6<dim) dst[(i)*(dim)+(j+6)] = avg(dim, i, j+6, src);
-			if(j+7<dim) dst[(i)*(dim)+(j+7)] = avg(dim, i, j+7, src);
-		}
+	// for (i = 0; i < dim; i++)
+	// 	for (j = 0; j < dim; j+=8){
+	// 		dst[(i)*(dim)+(j)] = avg(dim, i, j, src);
+	// 		if(j+1<dim) dst[(i)*(dim)+(j+1)] = avg(dim, i, j+1, src);
+	// 		if(j+2<dim) dst[(i)*(dim)+(j+2)] = avg(dim, i, j+2, src);
+	// 		if(j+3<dim) dst[(i)*(dim)+(j+3)] = avg(dim, i, j+3, src);
+	// 		if(j+4<dim) dst[(i)*(dim)+(j+4)] = avg(dim, i, j+4, src);
+	// 		if(j+5<dim) dst[(i)*(dim)+(j+5)] = avg(dim, i, j+5, src);
+	// 		if(j+6<dim) dst[(i)*(dim)+(j+6)] = avg(dim, i, j+6, src);
+	// 		if(j+7<dim) dst[(i)*(dim)+(j+7)] = avg(dim, i, j+7, src);
+	// 	}
+
+	//loop interchange + loop unrolling + blocking(small block size)
+	for (i = 0; i < dim; i+=BLOCK_SMOOTH)
+		for (j = 0; j < dim; j+=BLOCK_SMOOTH)
+			for(int ii=i; ii<i+BLOCK_SMOOTH && ii<dim;ii++)
+				for(int jj=j;jj<j+BLOCK_SMOOTH && jj<dim;jj+=8){
+					dst[RIDX(ii, jj, dim)] = avg(dim, ii, jj, src);
+					if(jj+1<dim) dst[RIDX(ii, jj+1, dim)] = avg(dim, ii, jj+1, src);
+					if(jj+2<dim) dst[RIDX(ii, jj+2, dim)] = avg(dim, ii, jj+2, src);
+					if(jj+3<dim) dst[RIDX(ii, jj+3, dim)] = avg(dim, ii, jj+3, src);
+					if(jj+4<dim) dst[RIDX(ii, jj+4, dim)] = avg(dim, ii, jj+4, src);
+					if(jj+5<dim) dst[RIDX(ii, jj+5, dim)] = avg(dim, ii, jj+5, src);
+					if(jj+6<dim) dst[RIDX(ii, jj+6, dim)] = avg(dim, ii, jj+6, src);
+					if(jj+7<dim) dst[RIDX(ii, jj+7, dim)] = avg(dim, ii, jj+7, src);
+				}
+		
+
+
 
 
 /* end of computation for smooth function. so don't change anything after this in this function. */
