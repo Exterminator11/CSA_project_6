@@ -409,9 +409,23 @@ void my_smooth(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 	// 		dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
 
 	//loop interchange
+	// for (i = 0; i < dim; i++)
+	// 	for (j = 0; j < dim; j++)
+	// 		dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
+
+	//loop interchange + loop unrolling
 	for (i = 0; i < dim; i++)
-		for (j = 0; j < dim; j++)
+		for (j = 0; j < dim; j+=8){
 			dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
+			if(j+1<dim) dst[RIDX(i, j+1, dim)] = avg(dim, i, j+1, src);
+			if(j+2<dim) dst[RIDX(i, j+2, dim)] = avg(dim, i, j+2, src);
+			if(j+3<dim) dst[RIDX(i, j+3, dim)] = avg(dim, i, j+3, src);
+			if(j+4<dim) dst[RIDX(i, j+4, dim)] = avg(dim, i, j+4, src);
+			if(j+5<dim) dst[RIDX(i, j+5, dim)] = avg(dim, i, j+5, src);
+			if(j+6<dim) dst[RIDX(i, j+6, dim)] = avg(dim, i, j+6, src);
+			if(j+7<dim) dst[RIDX(i, j+7, dim)] = avg(dim, i, j+7, src);
+		}
+
 
 /* end of computation for smooth function. so don't change anything after this in this function. */
 /* END OF CHANGES */
