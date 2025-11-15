@@ -8,7 +8,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
-#define BLOCK 64
+#define BLOCK 32
 
 /* Below are statements to set up the performance measurement utilities */
 /* we use rdtsc, clock, and getusage utilities to measure performance */
@@ -148,15 +148,31 @@ void my_rotate(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 	// 			for(int jj=j;jj<j+BLOCK && jj<dim;jj++)
 	// 				dst[RIDX(dim-1-jj, ii, dim)] = src[RIDX(ii, jj, dim)];
 
-	//Blocking + unrolling
+	//Blocking + unrolling(4 times)
+	// for (j = 0; j < dim; j+=BLOCK)
+	// 	for (i = 0; i < dim; i+=BLOCK)
+	// 		for(int jj=j;jj<j+BLOCK && jj<dim;jj++)
+	// 			for(int ii=i;ii<i+BLOCK && ii<dim;ii+=4){
+	// 				dst[RIDX(dim-1-jj, ii, dim)] = src[RIDX(ii, jj, dim)];
+	// 				if(ii+1<dim) dst[RIDX(dim-1-jj, ii+1, dim)] = src[RIDX(ii+1, jj, dim)];
+	// 				if(ii+2<dim) dst[RIDX(dim-1-jj, ii+2, dim)] = src[RIDX(ii+2, jj, dim)];
+	// 				if(ii+3<dim) dst[RIDX(dim-1-jj, ii+3, dim)] = src[RIDX(ii+3, jj, dim)];
+	// 			}
+
+	//Blocking + unrolling(8 times)
 	for (j = 0; j < dim; j+=BLOCK)
 		for (i = 0; i < dim; i+=BLOCK)
 			for(int jj=j;jj<j+BLOCK && jj<dim;jj++)
-				for(int ii=i;ii<i+BLOCK && ii<dim;ii+=4){
+				for(int ii=i;ii<i+BLOCK && ii<dim;ii+=8){
 					dst[RIDX(dim-1-jj, ii, dim)] = src[RIDX(ii, jj, dim)];
 					if(ii+1<dim) dst[RIDX(dim-1-jj, ii+1, dim)] = src[RIDX(ii+1, jj, dim)];
 					if(ii+2<dim) dst[RIDX(dim-1-jj, ii+2, dim)] = src[RIDX(ii+2, jj, dim)];
 					if(ii+3<dim) dst[RIDX(dim-1-jj, ii+3, dim)] = src[RIDX(ii+3, jj, dim)];
+					if(ii+4<dim) dst[RIDX(dim-1-jj, ii+4, dim)] = src[RIDX(ii+4, jj, dim)];
+					if(ii+5<dim) dst[RIDX(dim-1-jj, ii+5, dim)] = src[RIDX(ii+5, jj, dim)];
+					if(ii+6<dim) dst[RIDX(dim-1-jj, ii+6, dim)] = src[RIDX(ii+6, jj, dim)];
+					if(ii+7<dim) dst[RIDX(dim-1-jj, ii+7, dim)] = src[RIDX(ii+7, jj, dim)];
+
 				}
 
 
