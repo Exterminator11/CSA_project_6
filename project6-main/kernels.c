@@ -244,15 +244,16 @@ void my_rotate(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 				int limit = max_i - ((max_i - i) % 8);
 				int dstBase = (dim-1-jj) * dim;
 				int ii;
+				pixel *srcCol = &src[jj];
 				for(ii=i;ii<limit;ii+=8){
-					dst[dstBase+ii] = src[(ii)*(dim)+jj];
-					dst[dstBase+ii+1] = src[(ii+1)*(dim)+jj];
-					dst[dstBase+ii+2] = src[(ii+2)*(dim)+jj];
-					dst[dstBase+ii+3] = src[(ii+3)*(dim)+jj];
-					dst[dstBase+ii+4] = src[(ii+4)*(dim)+jj];
-					dst[dstBase+ii+5] = src[(ii+5)*(dim)+jj];
-					dst[dstBase+ii+6] = src[(ii+6)*(dim)+jj];
-					dst[dstBase+ii+7] = src[(ii+7)*(dim)+jj];
+					dst[dstBase+ii] = srcCol[ii*dim];
+					dst[dstBase+ii+1] = srcCol[(ii+1)*dim];
+					dst[dstBase+ii+2] = srcCol[(ii+2)*dim];
+					dst[dstBase+ii+3] = srcCol[(ii+3)*dim];
+					dst[dstBase+ii+4] = srcCol[(ii+4)*dim];
+					dst[dstBase+ii+5] = srcCol[(ii+5)*dim];
+					dst[dstBase+ii+6] = srcCol[(ii+6)*dim];
+					dst[dstBase+ii+7] = srcCol[(ii+7)*dim];
 				}
 				for (; ii < max_i; ii++)
                 	dst[dstBase+ii] = src[(ii)*(dim)+jj];
