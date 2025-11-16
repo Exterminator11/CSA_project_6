@@ -364,17 +364,194 @@ static pixel my_avg(int dim, int i, int j, pixel *src)
 	sum.red = sum.green = sum.blue = 0;
 	sum.num = 0;
 
-	for(ii = maximum(i-1, 0); ii <= minimum(i+1, dim-1); ii++) 
-		for(jj = maximum(j-1, 0); jj <= minimum(j+1, dim-1); jj++) {
-			// accumulate_sum(&sum, src[RIDX(ii, jj, dim)]);
+	// for(ii = maximum(i-1, 0); ii <= minimum(i+1, dim-1); ii++) 
+	// 	for(jj = maximum(j-1, 0); jj <= minimum(j+1, dim-1); jj++) {
+	// 		// accumulate_sum(&sum, src[RIDX(ii, jj, dim)]);
 			
-			//function inlining
-			pixel p=src[RIDX(ii, jj, dim)];
-			sum.red += (int) p.red;
-			sum.green += (int) p.green;
-			sum.blue += (int) p.blue;
-			sum.num++;
-		}
+	// 		//function inlining
+	// 		pixel p=src[RIDX(ii, jj, dim)];
+	// 		sum.red += (int) p.red;
+	// 		sum.green += (int) p.green;
+	// 		sum.blue += (int) p.blue;
+	// 		sum.num++;
+	// 	}
+
+	// Handle all 9 cases based on position in the grid
+	pixel p;
+
+	// Top-left corner (i=0, j=0)
+	if (i == 0 && j == 0) {
+		// Only 4 pixels: (0,0), (0,1), (1,0), (1,1)
+		p = src[RIDX(0, 0, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(0, 1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(1, 0, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(1, 1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+	}
+	// Top-right corner (i=0, j=dim-1)
+	else if (i == 0 && j == dim-1) {
+		// Only 4 pixels: (0,dim-2), (0,dim-1), (1,dim-2), (1,dim-1)
+		p = src[RIDX(0, dim-2, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(0, dim-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(1, dim-2, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(1, dim-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+	}
+	// Bottom-left corner (i=dim-1, j=0)
+	else if (i == dim-1 && j == 0) {
+		// Only 4 pixels: (dim-2,0), (dim-2,1), (dim-1,0), (dim-1,1)
+		p = src[RIDX(dim-2, 0, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(dim-2, 1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(dim-1, 0, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(dim-1, 1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+	}
+	// Bottom-right corner (i=dim-1, j=dim-1)
+	else if (i == dim-1 && j == dim-1) {
+		// Only 4 pixels: (dim-2,dim-2), (dim-2,dim-1), (dim-1,dim-2), (dim-1,dim-1)
+		p = src[RIDX(dim-2, dim-2, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(dim-2, dim-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(dim-1, dim-2, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(dim-1, dim-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+	}
+	// Top edge (i=0, 0<j<dim-1)
+	else if (i == 0) {
+		// 6 pixels: (0,j-1), (0,j), (0,j+1), (1,j-1), (1,j), (1,j+1)
+		p = src[RIDX(0, j-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(0, j, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(0, j+1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(1, j-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(1, j, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(1, j+1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+	}
+	// Bottom edge (i=dim-1, 0<j<dim-1)
+	else if (i == dim-1) {
+		// 6 pixels: (dim-2,j-1), (dim-2,j), (dim-2,j+1), (dim-1,j-1), (dim-1,j), (dim-1,j+1)
+		p = src[RIDX(dim-2, j-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(dim-2, j, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(dim-2, j+1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(dim-1, j-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(dim-1, j, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(dim-1, j+1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+	}
+	// Left edge (0<i<dim-1, j=0)
+	else if (j == 0) {
+		// 6 pixels: (i-1,0), (i-1,1), (i,0), (i,1), (i+1,0), (i+1,1)
+		p = src[RIDX(i-1, 0, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i-1, 1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i, 0, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i, 1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i+1, 0, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i+1, 1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+	}
+	// Right edge (0<i<dim-1, j=dim-1)
+	else if (j == dim-1) {
+		// 6 pixels: (i-1,dim-2), (i-1,dim-1), (i,dim-2), (i,dim-1), (i+1,dim-2), (i+1,dim-1)
+		p = src[RIDX(i-1, dim-2, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i-1, dim-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i, dim-2, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i, dim-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i+1, dim-2, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i+1, dim-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+	}
+	// Interior (all 9 pixels)
+	else {
+		p = src[RIDX(i-1, j-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i-1, j, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i-1, j+1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i, j-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i, j, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i, j+1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i+1, j-1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i+1, j, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+		
+		p = src[RIDX(i+1, j+1, dim)];
+		sum.red += (int) p.red; sum.green += (int) p.green; sum.blue += (int) p.blue; sum.num++;
+	}
 
 	// assign_sum_to_pixel(&current_pixel, sum);
 
