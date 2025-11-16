@@ -255,8 +255,6 @@ void my_rotate(int dim, pixel *src, pixel *dst, int *rusage_time, unsigned long 
 					dst[dstBase+ii+6] = srcCol[(ii+6)*dim];
 					dst[dstBase+ii+7] = srcCol[(ii+7)*dim];
 				}
-				for (; ii < max_i; ii++)
-                	dst[dstBase+ii] = src[(ii)*(dim)+jj];
 			}
 
 
