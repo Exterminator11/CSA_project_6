@@ -376,6 +376,7 @@ static pixel my_avg(int dim, int i, int j, pixel *src)
 	// 		sum.num++;
 	// 	}
 
+	//unroll the above loop as only 9 cases 
 	// Handle all 9 cases based on position in the grid
 	pixel p;
 
